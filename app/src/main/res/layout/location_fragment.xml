@@ -106,6 +106,7 @@
             android:background="#FFFFFF">
 
             <TextView
+                android:id="@+id/minsText"
                 android:layout_marginTop="80dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -117,7 +118,7 @@
                 android:text="15"/>
 
 
-<!-- hehehe sugonamatiddays -->
+            <!-- hehehe sugonamatiddays -->
 
             <TextView
                 android:layout_width="match_parent"
