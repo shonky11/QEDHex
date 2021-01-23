@@ -2,16 +2,12 @@ package com.qads.qedhex.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,49 +16,33 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.qads.qedhex.R;
-import com.qads.qedhex.helpers.InterestsAdapter;
-import com.qads.qedhex.helpers.InterestsModel;
-import com.qads.qedhex.helpers.MyInterestsAdapter;
 import com.qads.qedhex.helpers.User;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class LoginActivity extends AppCompatActivity implements InterestsAdapter.OnNoteListener{
+public class LoginActivity extends AppCompatActivity {
 
     EditText txtfirstname, txtlastname, txtage, txtinterests;
     TextView privacyPolicy;
-    private TextView noInterests;
     CardView signupbtn;
     Spinner txtcollegeid, txtdegreeid;
     CircleImageView profilePic;
     CheckBox checkBox;
-    private ImageView add_interests_btn, done_interests_btn;
 
     String personName, personGivenName, personFamilyName, personEmail, personId;
 
@@ -91,19 +71,6 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
     //this retrieves the entire document with this specific uid - needed to update the profile information
     private DocumentReference docRef = db.collection("users").document(userid);
 
-    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-    ArrayAdapter<String> adapter;
-    List<String> myInterests;
-    ArrayList<String> mInterests;
-
-
-    //GridLayout stuff
-    private GridLayoutManager gridLayoutManager, all_gridLayoutManager;
-    private RecyclerView.Adapter recyclerAdapter, all_recyclerAdapter;
-    private RecyclerView recyclerView, all_recyclerView;
-    private ArrayList<InterestsModel> interestsModel;
-    private ArrayList<InterestsModel> myInterestsList;
-
     private String TAG = "MyActivity";
 
     @Override
@@ -118,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
         txtfirstname = (EditText) findViewById(R.id.first);
         txtlastname = (EditText) findViewById(R.id.last);
         txtage = (EditText) findViewById(R.id.age);
-        //txtinterests = (EditText) findViewById(R.id.interests);
+        txtinterests = (EditText) findViewById(R.id.interests);
         //txtdegree = (EditText) findViewById(R.id.degree);
         signupbtn = (CardView) findViewById(R.id.signupbtn);
         profilePic = findViewById(R.id.original_profile_image);
@@ -142,16 +109,16 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
                 String last_name = txtlastname.getText().toString().trim();
                 //String college_id = txtcollegeid.getText().toString().trim();
                 String age = txtage.getText().toString().trim();
-                //String interests1 = txtinterests.getText().toString().trim();
+                String interests = txtinterests.getText().toString().trim();
                 //String degree_id = txtdegree.getText().toString().trim();
 
-                if(first_name.isEmpty() || last_name.isEmpty() || age.isEmpty() || !checkBox.isChecked()){
+                if(first_name.isEmpty() || last_name.isEmpty() || age.isEmpty() || !checkBox.isChecked() || interests.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Please fill out all the fields", Toast.LENGTH_SHORT).show();
                 }else if (!checkBox.isChecked()){
                     Toast.makeText(getApplicationContext(), "Please check the tick box", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    User users = new User(first_name, last_name, age, mFirebaseAuth.getUid(), null);
+                    User users = new User(first_name, last_name, age, mFirebaseAuth.getUid(), interests);
                     docRef.set(users)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -176,184 +143,6 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
 
         //gets current instance of the database
         mFirebaseAuth = FirebaseAuth.getInstance();
-
-
-        noInterests = (TextView) findViewById(R.id.no_interests);
-
-        recyclerView = (RecyclerView) findViewById(R.id.interests_recycler);
-        recyclerView.setHasFixedSize(true);
-
-        all_recyclerView = (RecyclerView) findViewById(R.id.all_interests_recycler);
-
-        gridLayoutManager = new GridLayoutManager(this, 2);
-        all_gridLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        all_recyclerView.setLayoutManager(all_gridLayoutManager);
-        all_recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        interestsModel = new ArrayList<InterestsModel>();
-        myInterestsList = new ArrayList<InterestsModel>(); //creates a list of all the interests
-
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    assert document != null;
-                    if (document.exists()) {
-                        myInterests = (List<String>) document.get("interests");
-                        //final ArrayList<String> list = new ArrayList<String>();
-                        if (myInterests == null||myInterests.isEmpty()){
-                            //interestsModel.add(new InterestsModel("You don't have any interests"));
-                            noInterests.setVisibility(View.VISIBLE);
-                        }else{
-                            for (int i = 0; i < myInterests.size(); ++i) {
-                                noInterests.setVisibility(View.GONE);
-                                interestsModel.add(new InterestsModel(myInterests.get(i)));
-                                myInterestsList.add(new InterestsModel(myInterests.get(i)));
-                            }
-                        }
-
-                        //GridAdapter gridAdapter = new GridAdapter(getContext(), list);
-                        //gridView.setAdapter(gridAdapter);
-
-                        /*//this is for the list view
-                        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, list);
-                        myInterestsList.setAdapter(adapter);
-                        setListViewHeight(myInterestsList);*/
-                        
-
-                        initMyRecyclerView();
-
-                        Log.d(TAG, interestsModel.toString());
-                    }
-                } else{
-                    Toast.makeText(getApplicationContext(), "didn't work", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        //inflate new recyclerview on add buttons press
-        add_interests_btn = (ImageView) findViewById(R.id.add_interests_button);
-        done_interests_btn = (ImageView) findViewById(R.id.done_interests_button);
-
-        add_interests_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                interestsModel.clear();
-                for (int i = 0; i < DataSet.all_interests.size(); i++){
-                    interestsModel.add(new InterestsModel(
-                            DataSet.all_interests.get(i)
-                    ));
-                }
-
-
-                initAllRecyclerView();
-                noInterests.setVisibility(View.GONE);
-                done_interests_btn.setVisibility(View.VISIBLE);
-                add_interests_btn.setVisibility(View.INVISIBLE);
-
-            }
-        });
-
-        done_interests_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                myInterests = (List<String>) document.get("interests");
-                                interestsModel.clear();
-                                //final ArrayList<String> list = new ArrayList<String>();
-                                if (myInterests == null||myInterests.isEmpty()){
-                                    //interestsModel.add(new InterestsModel("You don't have any interests"));
-                                    noInterests.setVisibility(View.VISIBLE);
-                                }else{
-                                    for (int i = 0; i < myInterests.size(); ++i) {
-                                        noInterests.setVisibility(View.GONE);
-                                        interestsModel.add(new InterestsModel(myInterests.get(i)));
-                                    }
-                                }
-
-                                //GridAdapter gridAdapter = new GridAdapter(getContext(), list);
-                                //gridView.setAdapter(gridAdapter);
-
-                                /*//this is for the list view
-                                final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, list);
-                                myInterestsList.setAdapter(adapter);
-                                setListViewHeight(myInterestsList);*/
-
-                                initMyRecyclerView();
-                                done_interests_btn.setVisibility(View.INVISIBLE);
-                                add_interests_btn.setVisibility(View.VISIBLE);
-                                Log.d(TAG, interestsModel.toString());
-                            }
-                        } else{
-                            Toast.makeText(getApplicationContext(), "didn't work", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    public void initAllRecyclerView(){
-        all_recyclerAdapter = new InterestsAdapter(interestsModel, this);
-        all_recyclerView.setAdapter(all_recyclerAdapter);
-        all_recyclerAdapter.notifyDataSetChanged();
-        all_recyclerView.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-    }
-
-    public void initMyRecyclerView(){
-        recyclerAdapter = new MyInterestsAdapter(interestsModel);
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerAdapter.notifyDataSetChanged();
-        recyclerView.setVisibility(View.VISIBLE);
-        all_recyclerView.setVisibility(View.GONE);
-    }
-
-
-    @Override
-    public void onNoteClick(int position, CardView cardView, TextView textView) {
-        //here do the things you want to do on a click event
-        //e.g create an intent to go somewhere
-        String one_interest = interestsModel.get(position).getInterests(); //this gets a reference to the object that is pressed
-        Log.d(TAG, "onNoteClick: " + String.valueOf(one_interest));
-        if (cardView.getCardBackgroundColor() == ColorStateList.valueOf(getResources().getColor(R.color.colorAccent))){
-            cardView.setCardBackgroundColor(Color.WHITE);
-            textView.setTextColor(Color.BLACK);
-            docRef.update("interests", FieldValue.arrayRemove(one_interest));
-        }
-        else{
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorAccent));
-            textView.setTextColor(Color.WHITE);
-            docRef.update("interests", FieldValue.arrayUnion(one_interest));
-        }
-        //cardView.setCardBackgroundColor(Color.BLACK);
-    }
-
-
-    public static class DataSet {
-
-        static ArrayList<String> all_interests = new ArrayList<>(Arrays.asList(
-                "Dogs",
-                "Cats",
-                "Beaney",
-                "Mercers",
-                "Engineering",
-                "Films",
-                "Netflix",
-                "Lakes",
-                "Trees",
-                "COVID"
-        ));
-
     }
 
     private void openFileChooser(){

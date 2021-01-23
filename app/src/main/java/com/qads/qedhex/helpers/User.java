@@ -9,18 +9,17 @@ public class User {
     private String mAge;
     private String mUid;
     private String mInterests;
-    private ArrayList<String> mMyInterests;
 
     public User(){
 
     }
 
-    public User(String firstname, String lastname, String age, String uid, String interests1) {
+    public User(String firstname, String lastname, String age, String uid, String interests) {
         mFirstname = firstname;
         mLastname = lastname;
         mAge = age;
         mUid = uid;
-        mInterests = interests1;
+        mInterests = interests;
     }
 
     public String getFirstname() {
@@ -43,13 +42,7 @@ public class User {
         return mInterests;
     }
 
-    public ArrayList<String> getmMyInterests() {
-        return mMyInterests;
-    }
 
-    public void setmMyInterests(ArrayList<String> interests) {
-        this.mMyInterests = interests;
-    }
 
     public void setFirstname(String firstname) {
         this.mFirstname = firstname;
