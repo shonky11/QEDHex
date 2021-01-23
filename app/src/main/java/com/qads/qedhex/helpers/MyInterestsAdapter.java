@@ -1,9 +1,11 @@
-package com.qads.qedhex;
+package com.qads.qedhex.helpers;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.qads.qedhex.R;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;

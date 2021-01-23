@@ -1,4 +1,4 @@
-package com.qads.qedhex;
+package com.qads.qedhex.helpers;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.qads.qedhex.R;
 
 import java.util.ArrayList;
 import java.util.List;

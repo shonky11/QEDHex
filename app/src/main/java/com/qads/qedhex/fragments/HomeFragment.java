@@ -1,5 +1,6 @@
 package com.qads.qedhex.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.qads.qedhex.R;
+import com.qads.qedhex.activities.SignUpActivity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +32,7 @@ public class HomeFragment extends Fragment {
     private RelativeLayout relativeLayout;
     private CardView loadedCardView, searchBar;
     private ImageView cartImageButton;
+    private ImageView notificationsImageBtn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,10 +47,15 @@ public class HomeFragment extends Fragment {
 
         setupCollapsingToolbar(rootView);
 
-        cartImageButton = (ImageView) rootView.findViewById(R.id.sign_out);
-        cartImageButton.setOnClickListener(new View.OnClickListener() {
+        notificationsImageBtn = (ImageView) rootView.findViewById(R.id.sign_out);
+        notificationsImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+
+                Intent intent = new Intent(getActivity(), SignUpActivity.class);
+                startActivity(intent);
+
                 Toast.makeText(getActivity(), "hehe", Toast.LENGTH_SHORT).show();
             }
         });
@@ -68,4 +77,5 @@ public class HomeFragment extends Fragment {
         loadedCardView = rootView.findViewById(R.id.final_card_view);
         loadedToolbar = rootView.findViewById(R.id.final_toolbar);
     }
+
 }

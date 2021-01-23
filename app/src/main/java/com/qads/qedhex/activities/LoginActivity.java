@@ -41,6 +41,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.qads.qedhex.R;
+import com.qads.qedhex.helpers.InterestsAdapter;
+import com.qads.qedhex.helpers.InterestsModel;
+import com.qads.qedhex.helpers.MyInterestsAdapter;
 import com.qads.qedhex.helpers.User;
 import com.squareup.picasso.Picasso;
 
@@ -220,6 +223,7 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
                         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, list);
                         myInterestsList.setAdapter(adapter);
                         setListViewHeight(myInterestsList);*/
+                        
 
                         initMyRecyclerView();
 
