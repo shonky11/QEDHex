@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "998490338165",
+    "project_id": "qedhex",
+    "storage_bucket": "qedhex.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998490338165:android:1ae2f49c063ce76f5fd93c",
+        "android_client_info": {
+          "package_name": "com.qads.qedhex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "998490338165-vrf9kri317e8todjd4ovc62i46u22co9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qads.qedhex",
+            "certificate_hash": "b28154fa571b9e9cb816eb08411369bd469a7f7f"
+          }
+        },
+        {
+          "client_id": "998490338165-oe5g04n7efhsghfl8q170116ceca20m5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyNwcOr2B60OLjesMgZgMVMi5f8hY4vMA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "998490338165-oe5g04n7efhsghfl8q170116ceca20m5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
