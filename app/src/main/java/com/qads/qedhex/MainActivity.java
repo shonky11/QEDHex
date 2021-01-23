@@ -3,7 +3,7 @@ package com.qads.qedhex;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-
+//hehehe
 public class MainActivity extends AppCompatActivity {
 
     @Override
