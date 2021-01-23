@@ -60,7 +60,7 @@ public class HomeFragment extends Fragment {
                 textView.setText("" + 1);
                 textView.setX(seekBar.getX() + val + seekBar.getThumbOffset() / 2);
                 //textView.setY(100); just added a value set this properly using screen with height aspect ratio , if you do not set it by default it will be there below seek bar
-
+//hehe
             }
 
             @Override
