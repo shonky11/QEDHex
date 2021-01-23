@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
                 textView.setText("" + i);
                 walkTime = i;
                 //textView.setY(100); just added a value set this properly using screen with height aspect ratio , if you do not set it by default it will be there below seek bar
-//hehe
+//hehehe
             }
 
             @Override
