@@ -48,6 +48,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //hehe
+
         return rootView;
     }
 
