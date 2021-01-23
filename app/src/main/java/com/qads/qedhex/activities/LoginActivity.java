@@ -1,4 +1,4 @@
-package com.qads.qedhex;
+package com.qads.qedhex.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,6 +29,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.qads.qedhex.R;
+import com.qads.qedhex.helpers.User;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
