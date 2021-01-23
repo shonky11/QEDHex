@@ -107,7 +107,7 @@
 
             <TextView
                 android:id="@+id/minsText"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="150dp"
@@ -115,7 +115,7 @@
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryLight"
                 android:textStyle="bold"
-                android:text="15"/>
+                android:text="50"/>
 
 
             <!-- hehehe sugonamatiddays -->
@@ -134,9 +134,22 @@
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:progress="50"
+                android:max="100"
                 android:thumbTint="@color/colorPrimaryLight"
                 android:progressTint="@color/colorPrimaryLight"
                 android:progressBackgroundTint="#A89F49"/>
+
+            <ImageView
+                android:layout_marginTop="24dp"
+                android:id="@+id/goButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_home_black_24dp"/>
+
 
             <ImageView
                 android:id="@+id/splash_imageview"

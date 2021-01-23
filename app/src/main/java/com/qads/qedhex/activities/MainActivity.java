@@ -1,18 +1,25 @@
 package com.qads.qedhex.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.qads.qedhex.R;
+import com.qads.qedhex.fragments.HomeFragment;
+import com.qads.qedhex.fragments.ProfileFragment;
 
 import java.util.Objects;
+
+import androidx.fragment.app.Fragment;
 
 //hehehe
 public class MainActivity extends AppCompatActivity {
@@ -33,21 +40,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        signOut();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
 
     }
 
-    public void signOut() {
-        //SIGN OUT METHOD
-        signout_btn = findViewById(R.id.sign_out);
-        signout_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
+    private BottomNavigationView.OnNavigationItemSelectedListener bottomNavListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Fragment selectedFragment = null;
 
-                Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+                    switch(item.getItemId()){
+                        case R.id.nav_cafe:
+                            selectedFragment = new HomeFragment();
+                            break;
+                        case R.id.nav_bar:
+                            selectedFragment = new ProfileFragment();
+                            break;
+                    }
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+
+                    return true;
+                }
+            };
+
 }
