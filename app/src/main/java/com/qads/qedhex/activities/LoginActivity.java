@@ -142,16 +142,16 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
                 String last_name = txtlastname.getText().toString().trim();
                 //String college_id = txtcollegeid.getText().toString().trim();
                 String age = txtage.getText().toString().trim();
-                String interests1 = txtinterests.getText().toString().trim();
+                //String interests1 = txtinterests.getText().toString().trim();
                 //String degree_id = txtdegree.getText().toString().trim();
 
-                if(first_name.isEmpty() || last_name.isEmpty() || age.isEmpty() || !checkBox.isChecked() || interests1.isEmpty()){
+                if(first_name.isEmpty() || last_name.isEmpty() || age.isEmpty() || !checkBox.isChecked()){
                     Toast.makeText(getApplicationContext(), "Please fill out all the fields", Toast.LENGTH_SHORT).show();
                 }else if (!checkBox.isChecked()){
                     Toast.makeText(getApplicationContext(), "Please check the tick box", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    User users = new User(first_name, last_name, age, mFirebaseAuth.getUid(), interests1);
+                    User users = new User(first_name, last_name, age, mFirebaseAuth.getUid(), null);
                     docRef.set(users)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
