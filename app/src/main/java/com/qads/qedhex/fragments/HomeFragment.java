@@ -56,8 +56,8 @@ public class HomeFragment extends Fragment {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                int val = (1 * (seekBar.getWidth() - 2 * seekBar.getThumbOffset())) / seekBar.getMax();
-                textView.setText("" + 1);
+                int val = (i * (seekBar.getWidth() - 2 * seekBar.getThumbOffset())) / seekBar.getMax();
+                textView.setText("" + i);
                 textView.setX(seekBar.getX() + val + seekBar.getThumbOffset() / 2);
                 //textView.setY(100); just added a value set this properly using screen with height aspect ratio , if you do not set it by default it will be there below seek bar
 
