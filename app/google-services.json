@@ -14,14 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "998490338165-2kf0v2go5idkbe25s5b5tse2qt0me9id.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.qads.qedhex",
-            "certificate_hash": "1a099ba47db54fcd624284d4ba04d9cba2670980"
-          }
-        },
-        {
           "client_id": "998490338165-vrf9kri317e8todjd4ovc62i46u22co9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

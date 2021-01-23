@@ -1,4 +1,4 @@
-package com.qads.qedhex.activities;
+package com.qads.qedhex;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,8 +31,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.qads.qedhex.R;
-import com.qads.qedhex.helpers.User;
 
 import java.util.Objects;
 

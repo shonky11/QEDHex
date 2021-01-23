@@ -2,9 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.qads.qedhex">
 
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.qads.qedhex.activities.SignUpActivity"
+            android:name="com.qads.qedhex.SignUpActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -25,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.qads.qedhex.activities.LoginActivity"
+        <activity android:name="com.qads.qedhex.LoginActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -33,8 +30,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.qads.qedhex.activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name="com.qads.qedhex.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
