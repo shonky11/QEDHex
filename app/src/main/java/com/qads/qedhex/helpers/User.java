@@ -1,4 +1,4 @@
-package com.qads.qedhex;
+package com.qads.qedhex.helpers;
 
 import java.util.ArrayList;
 
