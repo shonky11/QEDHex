@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.qads.qedhex.R;
+import com.qads.qedhex.activities.MapsActivity;
 import com.qads.qedhex.activities.LoginActivity;
 import com.qads.qedhex.activities.SignUpActivity;
 
@@ -87,20 +88,13 @@ public class HomeFragment extends Fragment {
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment nextFragment = new MapsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("Walk Time", walkTime);
-                nextFragment.setArguments(bundle);
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, nextFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                startActivity(intent);
             }
         });
 
 
-        signOut(rootView);
+        //hehe
 
         return rootView;
     }

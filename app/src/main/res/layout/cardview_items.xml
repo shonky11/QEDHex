@@ -1,0 +1,52 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/CardView_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16sp">
+
+
+
+
+            <TextView
+                android:id="@+id/TxtView_item1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_alignParentTop="true"
+                android:text="—"
+                android:textSize="30dp"/>
+
+            <TextView
+                android:id="@+id/StartTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/TxtView_item1"
+                android:layout_alignParentTop="true"
+                android:paddingRight="10sp"
+                android:text="12:00"
+                android:textSize="30dp"/>
+
+            <TextView
+                android:id="@+id/EndTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/TxtView_item1"
+                android:layout_alignParentTop="true"
+                android:paddingLeft="10sp"
+                android:text="12:15"
+                android:textSize="30dp"/>
+
+            />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
