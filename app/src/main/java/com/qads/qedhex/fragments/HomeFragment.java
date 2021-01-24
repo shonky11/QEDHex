@@ -77,6 +77,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.location_fragment, container, false);
 
+        HomeFragment.walkTime = 50;
         seekBar = rootView.findViewById(R.id.seekBar);
         textView = rootView.findViewById(R.id.minsText);
         goButton = rootView.findViewById(R.id.goButton);
@@ -120,6 +121,7 @@ public class HomeFragment extends Fragment {
 
                  //Add a new document in collection "cities"
                 accessToken = SignUpActivity.accessToken;
+                HomeFragment.location = new ArrayList<Double>();
                 HomeFragment.location.add(52.2152625);
                 HomeFragment.location.add(0.1172745);
 
@@ -132,7 +134,7 @@ public class HomeFragment extends Fragment {
 
                 Map<String, Object> docData2 = new HashMap<>();
                 HomeFragment.mapDocID = db.collection("walks").document().getId();
-                docData2.put("time_to_walk", HomeFragment.walkTime);
+                docData2.put("time_to_walk", HomeFragment.walkTime * 60);
                 docData2.put("walk_speed", 1);
                 docData2.put("location", HomeFragment.location);
 // Add a new document (asynchronously) in collection "cities" with id "LA"
