@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#f1ffe8">
 
     <LinearLayout
         android:id="@+id/relative_layout"
@@ -17,20 +17,19 @@
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="100sp"
             android:contentDescription="bridge_logo"
-            android:src="@drawable/ic_nature_people_black_124dp"/>
+            android:src="@drawable/hacklogo1" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="300dp"
             android:layout_height="65dp"
-            android:layout_marginTop="60sp"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/common_signin_button_text"
-            />
+            android:layout_marginTop="60sp"
+            android:contentDescription="@string/common_signin_button_text" />
 
         <!--<com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
@@ -44,20 +43,18 @@
             app:srcCompat="@drawable/ic_culs_signin_button" />-->
 
 
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="25dp"
-            >
+            android:layout_marginTop="25dp">
 
             <LinearLayout
                 android:id="@+id/login_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_centerHorizontal="true"
+                android:orientation="horizontal"
                 android:padding="10dp">
 
                 <androidx.cardview.widget.CardView
@@ -73,20 +70,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Already have an account?"
                             android:layout_gravity="center_horizontal"
+                            android:text="Already have an account?"
                             android:textColor="@color/gray"
-                            android:textSize="14sp"
-                            />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" Log in"
-                            android:textSize="14sp"
-                            android:textColor="@color/queenscolor"
                             android:layout_gravity="center_horizontal"
-                            />
+                            android:text=" Log in"
+                            android:textColor="@color/queenscolor"
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
@@ -96,7 +91,6 @@
 
             </LinearLayout>
         </RelativeLayout>
-
 
 
     </LinearLayout>

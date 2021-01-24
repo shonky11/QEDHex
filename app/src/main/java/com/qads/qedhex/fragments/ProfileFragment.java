@@ -40,6 +40,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.qads.qedhex.R;
 import com.qads.qedhex.helpers.InterestsAdapter;
 import com.qads.qedhex.helpers.InterestsModel;
@@ -53,7 +55,7 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileFragment extends Fragment implements InterestsAdapter.OnNoteListener {
+public class ProfileFragment extends Fragment {
 
     private TextView username, userCrsid, userBio, userCollege, userYear, userGradYear, userInterests, admin;
     private TextView signout_btn, noInterests;
@@ -91,6 +93,7 @@ public class ProfileFragment extends Fragment implements InterestsAdapter.OnNote
     private ArrayList<InterestsModel> interestsModel;
     private ArrayList<InterestsModel> myInterestsList;
     private ListenerRegistration userReg;
+    private MaterialCalendarView userCalendar;
 
     private String TAG = "ProfileFragment";
 
@@ -101,354 +104,35 @@ public class ProfileFragment extends Fragment implements InterestsAdapter.OnNote
 
         View v = inflater.inflate(R.layout.profile_fragment, container, false);
 
-        noInterests = (TextView) v.findViewById(R.id.no_interests);
+        final TextView username = (TextView) v.findViewById(R.id.user_name);
+        final TextView userAge = (TextView) v.findViewById(R.id.age);
+        final TextView userID = (TextView) v.findViewById(R.id.id);
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.interests_recycler);
-        recyclerView.setHasFixedSize(true);
 
-        all_recyclerView = (RecyclerView) v.findViewById(R.id.all_interests_recycler);
-
-        gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        all_gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        all_recyclerView.setLayoutManager(all_gridLayoutManager);
-        all_recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        interestsModel = new ArrayList<InterestsModel>();
-        myInterestsList = new ArrayList<InterestsModel>(); //creates a list of all the interests
-
-        /*for (int i = 0; i < DataSet.all_interests.size(); i++){
-            data.add(new InterestsModel(
-               DataSet.all_interests.get(i)
-            ));
-        }
-        recyclerAdapter = new InterestsAdapter(data);
-        recyclerView.setAdapter(recyclerAdapter);*/
-
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    assert document != null;
-                    if (document.exists()) {
-                        myInterests = (List<String>) document.get("interests");
-                        //final ArrayList<String> list = new ArrayList<String>();
-                        if (myInterests == null||myInterests.isEmpty()){
-                            //interestsModel.add(new InterestsModel("You don't have any interests"));
-                            noInterests.setVisibility(View.VISIBLE);
-                        }else{
-                            for (int i = 0; i < myInterests.size(); ++i) {
-                                noInterests.setVisibility(View.GONE);
-                                interestsModel.add(new InterestsModel(myInterests.get(i)));
-                                myInterestsList.add(new InterestsModel(myInterests.get(i)));
-                            }
-                        }
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error == null){
+                    if (value.exists()){
+                        String first_name = value.getString("firstname");
+                        String last_name = value.getString("lastname");
+                        String uid = value.getString("uid");
+                        String age2 = value.getString("age");
 
-                        //GridAdapter gridAdapter = new GridAdapter(getContext(), list);
-                        //gridView.setAdapter(gridAdapter);
+                        username.setText(first_name + last_name);
+                        userID.setText(uid);
+                        userAge.setText(age2);
 
-                        /*//this is for the list view
-                        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, list);
-                        myInterestsList.setAdapter(adapter);
-                        setListViewHeight(myInterestsList);*/
-
-                        initMyRecyclerView();
-
-                        Log.d(TAG, interestsModel.toString());
                     }
-                } else{
-                    Toast.makeText(getContext(), "didn't work", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
-
-
-        //inflate new recyclerview on add buttons press
-        add_interests_btn = (ImageView) v.findViewById(R.id.add_interests_button);
-        done_interests_btn = (ImageView) v.findViewById(R.id.done_interests_button);
-
-        add_interests_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                interestsModel.clear();
-                for (int i = 0; i < DataSet.all_interests.size(); i++){
-                    interestsModel.add(new InterestsModel(
-                            DataSet.all_interests.get(i)
-                    ));
                 }
 
 
-                initAllRecyclerView();
-                noInterests.setVisibility(View.GONE);
-                done_interests_btn.setVisibility(View.VISIBLE);
-                add_interests_btn.setVisibility(View.INVISIBLE);
-
             }
         });
 
-        done_interests_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                myInterests = (List<String>) document.get("interests");
-                                interestsModel.clear();
-                                //final ArrayList<String> list = new ArrayList<String>();
-                                if (myInterests == null||myInterests.isEmpty()){
-                                    //interestsModel.add(new InterestsModel("You don't have any interests"));
-                                    noInterests.setVisibility(View.VISIBLE);
-                                }else{
-                                    for (int i = 0; i < myInterests.size(); ++i) {
-                                        noInterests.setVisibility(View.GONE);
-                                        interestsModel.add(new InterestsModel(myInterests.get(i)));
-                                    }
-                                }
-
-                                //GridAdapter gridAdapter = new GridAdapter(getContext(), list);
-                                //gridView.setAdapter(gridAdapter);
-
-                                /*//this is for the list view
-                                final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, list);
-                                myInterestsList.setAdapter(adapter);
-                                setListViewHeight(myInterestsList);*/
-
-                                initMyRecyclerView();
-                                done_interests_btn.setVisibility(View.INVISIBLE);
-                                add_interests_btn.setVisibility(View.VISIBLE);
-                                Log.d(TAG, interestsModel.toString());
-                            }
-                        } else{
-                            Toast.makeText(getContext(), "didn't work", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
-
-        loadData(v);
-
-        //TODO set an intent to send pressing the edit button to the ProfileEditActivity with a fade transition
-        edit_btn = v.findViewById(R.id.edit_button);
-        edit_btn.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
-                startActivity(intent);
-                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);*/
-                Fragment nextFragment = new HomeFragment();
-                Fragment currentFragment = new ProfileFragment();
-
-                Bundle bundle = new Bundle();
-                nextFragment.setArguments(bundle);
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, nextFragment).detach(currentFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
 
         return v;
     }
 
-    public void initAllRecyclerView(){
-        all_recyclerAdapter = new InterestsAdapter(interestsModel, this);
-        all_recyclerView.setAdapter(all_recyclerAdapter);
-        all_recyclerAdapter.notifyDataSetChanged();
-        all_recyclerView.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-    }
-
-    public void initMyRecyclerView(){
-        recyclerAdapter = new MyInterestsAdapter(interestsModel);
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerAdapter.notifyDataSetChanged();
-        recyclerView.setVisibility(View.VISIBLE);
-        all_recyclerView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onNoteClick(int position, CardView cardView, TextView textView) {
-        //here do the things you want to do on a click event
-        //e.g create an intent to go somewhere
-        String one_interest = interestsModel.get(position).getInterests(); //this gets a reference to the object that is pressed
-        Log.d(TAG, "onNoteClick: " + String.valueOf(one_interest));
-        if (cardView.getCardBackgroundColor() == ColorStateList.valueOf(getResources().getColor(R.color.interestsCard))){
-            cardView.setCardBackgroundColor(Color.WHITE);
-            textView.setTextColor(Color.BLACK);
-            docRef.update("interests", FieldValue.arrayRemove(one_interest));
-        }
-        else{
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.interestsCard));
-            textView.setTextColor(Color.WHITE);
-            docRef.update("interests", FieldValue.arrayUnion(one_interest));
-        }
-        //cardView.setCardBackgroundColor(Color.BLACK);
-    }
-
-    public static class DataSet {
-
-        static ArrayList<String> all_interests = new ArrayList<>(Arrays.asList(
-                "Dogs",
-                "Cats",
-                "Beaney",
-                "Mercers",
-                "Engineering",
-                "Films",
-                "Netflix",
-                "Lakes",
-                "Trees",
-                "COVID"
-        ));
-
-    }
-
-    public void loadData(View v) {
-
-        userReg = userDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    System.err.println("Listen failed: " + error);
-                    return;
-                }
-
-                if (value != null && value.exists()) {
-                    currentUser = value.toObject(User.class);
-                } else {
-                    System.out.print("Current data: null");
-                }
-            }
-        });
-        //this function will load in the current data of the user in the Firebase Database
-        final TextView username = (TextView) v.findViewById(R.id.user_name);
-        final TextView userBio = (TextView) v.findViewById(R.id.bio);
-        final TextView userAge = (TextView) v.findViewById(R.id.user_age);
-
-        //username.setText(HomeFragment.currentUser.getFirstname() + HomeFragment.currentUser.getLastname());
-
-        /*if (currentUser.getFirstname() != null && currentUser.getLastname() != null){
-            username.setText(currentUser.getFirstname() + currentUser.getLastname());
-        }
-        else{
-            userCrsid.setText("Name");
-        }
-
-        if (currentUser.getAge() != null){
-            userAge.setText(currentUser.getAge());
-        }else{
-            userAge.setText("Age");
-        }*/
-
-
-        //final GridView gridView = (GridView) v.findViewById(R.id.interestsGridView);
-
-        //set up the adapter
-        //adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, myInterests);
-        //myInterestsList.setAdapter(adapter);
-
-        //method for loading textView data
-        Regiboi = docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                                 @Override
-                                                 public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
-                                                     if (error == null) {
-                                                         if (documentSnapshot.exists()) {
-
-                                                             if (documentSnapshot.get("firstname") != null && documentSnapshot.get("lastname") != null) {
-                                                                 String first_name = documentSnapshot.getString("firstname");
-                                                                 String last_name = documentSnapshot.getString("lastname");
-
-                                                                 username.setText(first_name + " " + last_name);
-                                                             } else {
-                                                                 username.setText("Username Here");
-                                                             }
-
-                                                             if (documentSnapshot.get("bio") == null || documentSnapshot.get("bio").toString().equals("")) {
-                                                                 userBio.setText("Add a description about yourself, including interests and ambitions.");
-
-                                                             } else {
-                                                                 String bio = documentSnapshot.getString("bio");
-
-                                                                 userBio.setText(bio);
-                                                             }
-
-                                                             if (documentSnapshot.get("age") != null) {
-                                                                 String age = documentSnapshot.getString("age");
-
-                                                                 userAge.setText(age);
-                                                             } else {
-                                                                 userAge.setText("Age");
-                                                             }
-
-                        /*if (documentSnapshot.get("status").equals("admin")){
-                            admin.setVisibility(View.VISIBLE);
-                        }*/
-
-                        /*if (documentSnapshot.get("interests") != null){
-
-                            myInterests = documentSnapshot.get("interests");
-                                    //toObject(MyInterestsList.class).interests;
-                            for (int i=0; i < myInterests.size(); i++){
-                                adapter.add(myInterests.get(i));
-                                adapter.notifyDataSetChanged();
-                            }
-                        }*/
-
-                                                             }
-
-                                                         }
-                                                     }
-
-                                             });
-
-
-
-        //set the profile picture from firebase
-        final ImageView profilePic = v.findViewById(R.id.profile_image);
-        //profileImage = v.findViewById(R.id.profile_image);
-        fetchImage(profilePic);
-
-        //TODO: Load in the list of interests
-
-    }
-
-
-
-    private void fetchImage(final ImageView image) {
-        //using glide method
-
-        //Reference to an image file in cloud storage
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        final BaseRequestOptions requestOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL);
-
-        // Create a reference with an initial file path and name
-        StorageReference pathReference = storageRef.child("users/"+userid+"/profilePic");
-        //Glide.with(getContext()).load(pathReference).placeholder(R.drawable.noprofilepicture).apply(requestOptions).fitCenter().into(image);
-        Glide.with(getContext()).load(pathReference).placeholder(R.drawable.noprofilepicture).signature(new ObjectKey(System.currentTimeMillis())).fitCenter().into(image);
-
-        /*pathReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                String userProfileImageUri = uri.toString();
-                //GlideApp.with(getContext()).load(userProfileImageUri).placeholder(R.drawable.ic_profile_icon_24dp).fitCenter().into(image);
-                Glide.with(getContext()).load(userProfileImageUri).placeholder(R.drawable.noprofilepicture).apply(requestOptions).fitCenter().into(image);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                //GlideApp.with(getContext()).load(R.drawable.ic_profile_icon_24dp).placeholder(R.drawable.ic_profile_icon_24dp).fitCenter().into(image);
-                Glide.with(getContext()).load(R.drawable.noprofilepicture).placeholder(R.drawable.noprofilepicture).apply(requestOptions).fitCenter().into(image);
-            }
-        });*/
-
-    }
 }
