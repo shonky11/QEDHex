@@ -31,18 +31,20 @@ import javax.annotation.Nullable;
 public class ItemsFragment extends Fragment {
     private View rootView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference calendarItemRef = db.collection("calendaritems");
+    private CollectionReference calendarItemRef = db.collection("calendar_slots");
     private CalendarItemAdapter adapter;
     private String start_time;
     private String end_time;
+//    private String calID:
+//    private String mapID:
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @androidx.annotation.Nullable Bundle savedInstanceState){
         Bundle bundle = this.getArguments();
         rootView = inflater.inflate(R.layout.items_fragment, container, false);
-        start_time = bundle.getString("Current StartTime");
-        end_time = bundle.getString("Current EndTime");
+//        calID = bundle.getString("CalID");
+//        mapID = bundle.getString("MapID");
         setUpRecyclerView();
         return rootView;
     }
@@ -53,21 +55,21 @@ public class ItemsFragment extends Fragment {
         FirestoreRecyclerOptions<CalendarItem> options = new FirestoreRecyclerOptions.Builder<CalendarItem>()
                 .setQuery(query, CalendarItem.class).build();
 
-        adapter = new CalendarItemAdapter(options);
+        //adapter = new CalendarItemAdapter(options);
         RecyclerView recyclerView = rootView.findViewById(R.id.items_rv);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        adapter.setOnItemClickListener(new CalendarItemAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
-                String id = documentSnapshot.getId();
-                onCategoryClickmeister(id);
-                CalendarItem clicked = (CalendarItem) adapter.getItem(position);
-                Toast.makeText(getContext(), "Position: " + position + " ID: " + clicked.getOptionsList().get(0).get("name"), Toast.LENGTH_SHORT).show(); }
-        });
+//        adapter.setOnItemClickListener(new CalendarItemAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+//                String id = documentSnapshot.getId();
+//                onCategoryClickmeister(id);
+//                CalendarItem clicked = (CalendarItem) adapter.getItem(position);
+//                Toast.makeText(getContext(), "Position: " + position + " ID: " + clicked.getOptionsList().get(0).get("name"), Toast.LENGTH_SHORT).show(); }
+//        });
     }
 
     public void onCategoryClickmeister(String id){
@@ -84,15 +86,15 @@ public class ItemsFragment extends Fragment {
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        adapter.startListening();
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        adapter.stopListening();
+//    }
 }

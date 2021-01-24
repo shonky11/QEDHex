@@ -6,61 +6,74 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.qads.qedhex.R;
 
-public class CalendarItemAdapter extends FirestoreRecyclerAdapter<CalendarItem, CalendarItemAdapter.CalendarItemHolder> {
+import java.util.ArrayList;
+import java.util.List;
 
-    private OnItemClickListener listener;
+public class CalendarItemAdapter extends RecyclerView.Adapter<CalendarItemAdapter.MyViewHolder>{
 
-    public CalendarItemAdapter(@NonNull FirestoreRecyclerOptions<CalendarItem> options) {
-        super(options);
+    private ArrayList<InterestsModel> interestsModel;
+    private OnNoteListener mOnNoteListener; //this sets the onNoteListener to the viewholder
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    //this retrieves the entire document with this specific uid
+    private DocumentReference docRef = db.collection("users").document(userid);
+    List<String> myInterests;
+
+    public CalendarItemAdapter(ArrayList<InterestsModel> data, InterestsAdapter.OnNoteListener onNoteListener) {
+        this.interestsModel = data;
+        this.mOnNoteListener = (OnNoteListener) onNoteListener;
     }
-
-    @Override
-    protected void onBindViewHolder(@NonNull CalendarItemHolder holder, int position, @NonNull CalendarItem model) {
-        holder.startTime.setText(model.getStartTime());
-        holder.endTime.setText(model.getEndTime());
-    }
-
-
 
     @NonNull
     @Override
-    public CalendarItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_items, parent, false);
-        return new CalendarItemHolder(v);
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
     }
 
-    class CalendarItemHolder extends RecyclerView.ViewHolder {
-        TextView startTime, endTime;
+    @Override
+    public int getItemCount() {
+        return interestsModel.size();
+    }
 
-        public CalendarItemHolder(@NonNull View itemView) {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+        TextView interests_tag;
+        CardView interests_card;
+        InterestsAdapter.OnNoteListener onNoteListener;
+
+        public MyViewHolder(@NonNull View itemView, InterestsAdapter.OnNoteListener onNoteListener) {
             super(itemView);
-            startTime = itemView.findViewById(R.id.StartTime);
-            endTime = itemView.findViewById(R.id.EndTime);
+            this.interests_tag = (TextView) itemView.findViewById(R.id.interests_tag);
+            this.interests_card = (CardView) itemView.findViewById(R.id.interests_card);
+            this.onNoteListener = onNoteListener;
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION && listener != null) {
-                        listener.onItemClick(getSnapshots().getSnapshot(position), position);
-                    }
-                }
-            });
+            //attach onClickListener to entire view
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            onNoteListener.onNoteClick(getAdapterPosition(), interests_card, interests_tag); //getAdapterPosition returns the position of the holder clicked
         }
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(DocumentSnapshot documentSnapshot, int position);
-    }
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
+    public interface OnNoteListener{
+        void onNoteClick(int position, CardView cardView, TextView textView); //will send the position of the clicked item
     }
 }
