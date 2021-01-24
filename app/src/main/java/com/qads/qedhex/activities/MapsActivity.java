@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,9 +33,12 @@ import com.google.firebase.storage.StorageReference;
 import com.qads.qedhex.R;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.qads.qedhex.fragments.HomeFragment;
 import com.qads.qedhex.helpers.Route;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,8 +48,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ListenerRegistration routesReg;
     private DocumentReference routes;
     private Route route;
-    private List<LatLng> latlngList = new ArrayList<LatLng>();
-
+    private List<LatLng> latlngList;
+    private Polyline line = null;
 
     @Nullable
     @Override
@@ -53,18 +57,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        getRoute();
+        //getRoute(HomeFragment.mapDocID);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        getRoute(HomeFragment.mapDocID);
+
+
+
+
+        final Button button = findViewById(R.id.new_route_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Map<String, Object> docData2 = new HashMap<>();
+                HomeFragment.mapDocID = db.collection("walks").document().getId();
+                docData2.put("time_to_walk", HomeFragment.walkTime * 60);
+                //System.out.println(docData2.put("time_to_walk", HomeFragment.walkTime));
+                docData2.put("walk_speed", 1);
+                docData2.put("location", HomeFragment.location);
+                docData2.put("regenerate", true);
+// Add a new document (asynchronously) in collection "cities" with id "LA"
+                db.collection("walks").document(HomeFragment.mapDocID).set(docData2);
+                getRoute(HomeFragment.mapDocID);
+            }
+        });
+
+
+
 
 
     }
 
-    public void getRoute() {
+    public void getRoute(String docID) {
 
-        routes = db.collection("walks").document("ggtBZskiq249Nd790PNa");
+        routes = db.collection("walks").document(docID);
         routesReg = routes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @SuppressLint("ResourceAsColor")
             @Override
@@ -74,26 +102,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     return;
                 }
 
+                latlngList = new ArrayList<LatLng>();
+
                 if (value != null && value.exists()) {
-                    route = value.toObject(Route.class);
+                    mMap.clear();
+                    try {
+                        route = value.toObject(Route.class);
                     for (Object  latlng : route.getSteps()){
                           Map<String, Object> llMap = (Map<String, Object>) latlng;
                           Double lat = (Double) llMap.get("lat");
                           Double lng = (Double) llMap.get("lng");
                           latlngList.add(new LatLng(lat,lng));
 
-                        Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
-                                .clickable(true)
-                                .addAll(latlngList));
+
+                    }} catch (NullPointerException e) {
+                        return;
+                    }
+
+                    mMap.addPolyline(new PolylineOptions()
+                            .clickable(true)
+                            .addAll(latlngList));
 //                        new LatLng(-35.016, 143.321),
 //                        new LatLng(-34.747, 145.592),
 //                        new LatLng(-34.364, 147.891),
 //                        new LatLng(-33.501, 150.217),
 //                        new LatLng(-32.306, 149.248),
 //                        new LatLng(-32.491, 147.309)));
-                        LatLng center = new LatLng(route.getResponseCenter().get("lat").doubleValue(), route.getResponseCenter().get("lng").doubleValue());
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 16));
-                    }
+                    LatLng center = new LatLng(route.getResponseCenter().get("lat").doubleValue(), route.getResponseCenter().get("lng").doubleValue());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 15));
+                    LatLng home = new LatLng(HomeFragment.location.get(0), HomeFragment.location.get(1));
+                    mMap.addMarker(new MarkerOptions().position(home).title("Start"));
+
+                    Map<String,Object> pos = (Map<String, Object>) ((Map<String,Object>)route.getResponsePOI().get("geometry")).get("location");
+
+                    LatLng poi = new LatLng((double) pos.get("lat"), (double) pos.get("lng"));
+                    mMap.addMarker(new MarkerOptions().position(poi).title("POI"));
                 }
             }
         });
@@ -111,9 +154,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        Toast.makeText(getBaseContext(), latlngList.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getBaseContext(), latlngList.toString(), Toast.LENGTH_LONG).show();
 
-        Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
+        /*Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
                 .clickable(true)
                 .addAll(latlngList));
 //                        new LatLng(-35.016, 143.321),
@@ -122,10 +165,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                        new LatLng(-33.501, 150.217),
 //                        new LatLng(-32.306, 149.248),
 //                        new LatLng(-32.491, 147.309)));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-23.684, 133.903), 4));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-23.684, 133.903), 4));*/
         // Add a marker in Sydney and move the camera
       //  LatLng sydney = new LatLng(-34, 151);
     //    mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
+
+//Map<String, Object> docData2 = new HashMap<>();
+//                String mapDocID = db.collection("calendar_slots").document().getId();
+//                docData.put("time_to_walk", walkTime);
+//                docData.put("walk_speed", 1);
+//                docData.put("location", location);
+//// Add a new document (asynchronously) in collection "cities" with id "LA"
+//                db.collection("walks").document(mapDocID).set(docData2);
