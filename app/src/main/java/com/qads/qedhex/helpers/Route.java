@@ -7,21 +7,22 @@ import java.util.Map;
 public class Route {
 
 
-    private List<Double> mLocation;
+    private List<Long> mLocation;
     private Map<String, Object> mResponse;
-    private Double mTime_to_walk;
-    private Double mWalk_speed;
-    private Double mDistance;
-    private Double mTime;
-    private Map<String, Double> mCenter;
+    private Long mTime_to_walk;
+    private Long mWalk_speed;
+    private Long mDistance;
+    private Long mTime;
+    private Map<String, Number> mCenter;
     private Map<String, Object> mPOI;
     private String mStatus;
     private String mName;
+    private List<Object> mSteps;
 
     public Route(){
     }
 
-    public Route(List<Double> location, Map<String, Object> response, Double time_to_walk, Double walk_speed){
+    public Route(List<Long> location, Map<String, Object> response, Long time_to_walk, Long walk_speed){
 
         mLocation = location;
         mResponse = response;
@@ -31,7 +32,7 @@ public class Route {
     }
 
 
-    public List<Double> getLocation() {
+    public List<Long> getLocation() {
         return mLocation;
     }
 
@@ -39,18 +40,18 @@ public class Route {
         return mResponse;
     }
 
-    public Double getResponseDistance() {
-        mDistance = (Double) mResponse.get("actual_distance");
+    public Long getResponseDistance() {
+        mDistance = (Long) mResponse.get("actual_distance");
         return mDistance;
     }
 
-    public Double getResponseTime() {
-        mTime = (Double) mResponse.get("actual_time");
+    public Long getResponseTime() {
+        mTime = (Long) mResponse.get("actual_time");
         return mTime;
     }
 
-    public Map<String, Double> getResponseCenter() {
-        mCenter = (Map<String, Double>) mResponse.get("map_center");
+    public Map<String, Number> getResponseCenter() {
+        mCenter = (Map<String, Number>) mResponse.get("map_center");
         return mCenter;
     }
 
@@ -70,15 +71,20 @@ public class Route {
         return mName;
     }
 
-    public Double getTime_to_walk() {
+    public List<Object> getSteps() {
+        mSteps = (List<Object>) mResponse.get("steps");
+        return mSteps;
+    }
+
+    public Long getTime_to_walk() {
         return mTime_to_walk;
     }
 
-    public Double getWalk_speed() {
+    public Long getWalk_speed() {
         return mWalk_speed;
     }
 
-    public void setLocation(List<Double> mLocation) {
+    public void setLocation(List<Long> mLocation) {
         this.mLocation = mLocation;
     }
 
@@ -86,11 +92,11 @@ public class Route {
         this.mResponse = mResponse;
     }
 
-    public void setTime_to_walk(Double mTime_to_walk) {
+    public void setTime_to_walk(Long mTime_to_walk) {
         this.mTime_to_walk = mTime_to_walk;
     }
 
-    public void setWalk_speed(Double mWalk_speed) {
+    public void setWalk_speed(Long mWalk_speed) {
         this.mWalk_speed = mWalk_speed;
     }
 }

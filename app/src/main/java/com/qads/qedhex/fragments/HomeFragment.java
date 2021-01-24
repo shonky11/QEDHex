@@ -14,11 +14,19 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firestore.v1.WriteResult;
 import com.qads.qedhex.R;
 import com.qads.qedhex.activities.MapsActivity;
 import com.qads.qedhex.activities.LoginActivity;
 import com.qads.qedhex.activities.SignUpActivity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +49,9 @@ public class HomeFragment extends Fragment {
     private TextView textView;
     private int walkTime;
     private ImageView goButton;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private List<Double> location = new ArrayList<>();
+    private String accessToken;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,8 +99,34 @@ public class HomeFragment extends Fragment {
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MapsActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), MapsActivity.class);
+//                startActivity(intent);
+                // Add a new document in collection "cities"
+                Map<String, Object> docData = new HashMap<>();
+                String calDocID = db.collection("calendar_slots").document().getId();   //Get Doc ID first.
+                docData.put("access_token", accessToken);
+                docData.put("min_time", walkTime);
+// Add a new document (asynchronously) in collection "cities" with id "LA"
+                db.collection("calendar_slots").document(calDocID).set(docData);
+
+                Map<String, Object> docData2 = new HashMap<>();
+                String mapDocID = db.collection("calendar_slots").document().getId();
+                docData.put("time_to_walk", walkTime);
+                docData.put("walk_speed", 1);
+                docData.put("location", location);
+// Add a new document (asynchronously) in collection "cities" with id "LA"
+                db.collection("walks").document(mapDocID).set(docData2);
+
+                Fragment nextFragment = new ItemsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("CalID", calDocID);
+                bundle.putString("MapID", mapDocID);
+                nextFragment.setArguments(bundle);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, nextFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
 

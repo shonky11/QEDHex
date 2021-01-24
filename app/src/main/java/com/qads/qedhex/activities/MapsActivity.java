@@ -34,12 +34,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.qads.qedhex.helpers.Route;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private GoogleMap mMap;
     private ListenerRegistration routesReg;
     private DocumentReference routes;
     private Route route;
+    private List<LatLng> latlngList = new ArrayList<LatLng>();
+
 
     @Nullable
     @Override
@@ -47,6 +53,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        getRoute();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -55,26 +62,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-//    public void getCard() {
-//
-//        routes = db.collection("Events").document(routeID);
-//        routesReg = routes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//            @SuppressLint("ResourceAsColor")
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-//                if (error != null) {
-//                    System.err.println("Listen failed: " + error);
-//                    return;
-//                }
-//
-//                if (value != null && value.exists()) {
-//                    route = value.toObject(Route.class);
-//                    route.setID(routeID);
-//
-//                }
-//            }
-//        });
-//    }
+    public void getRoute() {
+
+        routes = db.collection("walks").document("ggtBZskiq249Nd790PNa");
+        routesReg = routes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    System.err.println("Listen failed: " + error);
+                    return;
+                }
+
+                if (value != null && value.exists()) {
+                    route = value.toObject(Route.class);
+                    for (Object  latlng : route.getSteps()){
+                          Map<String, Object> llMap = (Map<String, Object>) latlng;
+                          Double lat = (Double) llMap.get("lat");
+                          Double lng = (Double) llMap.get("lng");
+                          latlngList.add(new LatLng(lat,lng));
+
+                        Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
+                                .clickable(true)
+                                .addAll(latlngList));
+//                        new LatLng(-35.016, 143.321),
+//                        new LatLng(-34.747, 145.592),
+//                        new LatLng(-34.364, 147.891),
+//                        new LatLng(-33.501, 150.217),
+//                        new LatLng(-32.306, 149.248),
+//                        new LatLng(-32.491, 147.309)));
+                        LatLng center = new LatLng(route.getResponseCenter().get("lat").doubleValue(), route.getResponseCenter().get("lng").doubleValue());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 16));
+                    }
+                }
+            }
+        });
+    }
 
     /**
      * Manipulates the map once available.
@@ -88,16 +111,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Toast.makeText(getBaseContext(), latlngList.toString(), Toast.LENGTH_LONG).show();
 
         Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
                 .clickable(true)
-                .add(
-                        new LatLng(-35.016, 143.321),
-                        new LatLng(-34.747, 145.592),
-                        new LatLng(-34.364, 147.891),
-                        new LatLng(-33.501, 150.217),
-                        new LatLng(-32.306, 149.248),
-                        new LatLng(-32.491, 147.309)));
+                .addAll(latlngList));
+//                        new LatLng(-35.016, 143.321),
+//                        new LatLng(-34.747, 145.592),
+//                        new LatLng(-34.364, 147.891),
+//                        new LatLng(-33.501, 150.217),
+//                        new LatLng(-32.306, 149.248),
+//                        new LatLng(-32.491, 147.309)));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-23.684, 133.903), 4));
         // Add a marker in Sydney and move the camera
       //  LatLng sydney = new LatLng(-34, 151);
