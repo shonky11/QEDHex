@@ -6,26 +6,23 @@ import java.util.Map;
 
 public class CalendarItem {
 
-    private List<Map<String, Object>> mTimesList;
+    private ArrayList<Map<String, Object>> mTimesList;
 
     public CalendarItem(){
 
     }
 
 
-    public CalendarItem(List<Map<String, Object>> timesList) {
+    public CalendarItem(ArrayList<Map<String, Object>> timesList) {
         mTimesList = timesList;
     }
 
-    private void optionsPopulate(){
 
-    }
-
-    public List<Map<String, Object>> getResponse() {
+    public ArrayList<Map<String, Object>> getResponse() {
         return mTimesList;
     }
 
-    public void setResponse(List<Map<String, Object>> mTimesList) {
+    public void setResponse(ArrayList<Map<String, Object>> mTimesList) {
         this.mTimesList = mTimesList;
     }
 
