@@ -61,10 +61,11 @@ public class HomeFragment extends Fragment {
     private ImageView cartImageButton;
     private SeekBar seekBar;
     private TextView textView;
-    private int walkTime = 50;
+    public static int walkTime = 50;
     private ImageView goButton;
+    public static String mapDocID;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private List<Double> location = new ArrayList<>();
+    public static List<Double> location = new ArrayList<>();
     private String accessToken;
 
     @Override
@@ -128,12 +129,12 @@ public class HomeFragment extends Fragment {
                 db.collection("calendar_slots").document(calDocID).set(docData);
 
                 Map<String, Object> docData2 = new HashMap<>();
-                String mapDocID = db.collection("walks").document().getId();
+                HomeFragment.mapDocID = db.collection("walks").document().getId();
                 docData.put("time_to_walk", walkTime);
                 docData.put("walk_speed", 1);
                 docData.put("location", location);
 // Add a new document (asynchronously) in collection "cities" with id "LA"
-                db.collection("walks").document(mapDocID).set(docData2);
+                db.collection("walks").document(HomeFragment.mapDocID).set(docData2);
 
                 Fragment nextFragment = new ItemsFragment();
                 Bundle bundle = new Bundle();
