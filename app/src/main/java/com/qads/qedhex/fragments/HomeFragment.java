@@ -19,9 +19,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -61,11 +59,12 @@ public class HomeFragment extends Fragment {
     private ImageView cartImageButton;
     private SeekBar seekBar;
     private TextView textView;
-    private int walkTime;
+    public static int walkTime;
     private ImageView goButton;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private List<Double> location = new ArrayList<>();
+    public static List<Double> location = new ArrayList<>();
     private String accessToken;
+    public static String mapDocID;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,7 +92,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 textView.setText("" + i);
-                walkTime = i;
+                HomeFragment.walkTime = i;
                 //textView.setY(100); just added a value set this properly using screen with height aspect ratio , if you do not set it by default it will be there below seek bar
                 //hehehe
             }
@@ -113,27 +112,31 @@ public class HomeFragment extends Fragment {
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MapsActivity.class);
-                startActivity(intent);
-                // Add a new document in collection "cities"
-//                accessToken = SignUpActivity.accessToken;
-//                location.add(52.2152625);
-//                location.add(0.1172745);
-//
-//                Map<String, Object> docData = new HashMap<>();
-//                String calDocID = db.collection("calendar_slots").document().getId();   //Get Doc ID first.
-//                docData.put("access_token", accessToken);
-//                docData.put("min_time", walkTime);
-//// Add a new document (asynchronously) in collection "cities" with id "LA"
-//                db.collection("calendar_slots").document(calDocID).set(docData);
-//
-//                Map<String, Object> docData2 = new HashMap<>();
-//                String mapDocID = db.collection("calendar_slots").document().getId();
-//                docData.put("time_to_walk", walkTime);
+
+                //docData.put("time_to_walk", walkTime);
 //                docData.put("walk_speed", 1);
 //                docData.put("location", location);
-//// Add a new document (asynchronously) in collection "cities" with id "LA"
-//                db.collection("walks").document(mapDocID).set(docData2);
+
+
+                 //Add a new document in collection "cities"
+                accessToken = SignUpActivity.accessToken;
+                HomeFragment.location.add(52.2152625);
+                HomeFragment.location.add(0.1172745);
+
+                Map<String, Object> docData = new HashMap<>();
+                String calDocID = db.collection("calendar_slots").document().getId();   //Get Doc ID first.
+                docData.put("access_token", accessToken);
+                docData.put("min_time", HomeFragment.walkTime);
+// Add a new document (asynchronously) in collection "cities" with id "LA"
+                db.collection("calendar_slots").document(calDocID).set(docData);
+
+                Map<String, Object> docData2 = new HashMap<>();
+                HomeFragment.mapDocID = db.collection("walks").document().getId();
+                docData2.put("time_to_walk", HomeFragment.walkTime);
+                docData2.put("walk_speed", 1);
+                docData2.put("location", HomeFragment.location);
+// Add a new document (asynchronously) in collection "cities" with id "LA"
+                db.collection("walks").document(HomeFragment.mapDocID).set(docData2);
 //
 //                Fragment nextFragment = new ItemsFragment();
 //                Bundle bundle = new Bundle();
@@ -145,6 +148,8 @@ public class HomeFragment extends Fragment {
 //                fragmentTransaction.replace(R.id.fragment_container, nextFragment);
 //                fragmentTransaction.addToBackStack(null);
 //                fragmentTransaction.commit();
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                startActivity(intent);
             }
         });
 

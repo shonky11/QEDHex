@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,9 +33,12 @@ import com.google.firebase.storage.StorageReference;
 import com.qads.qedhex.R;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.qads.qedhex.fragments.HomeFragment;
 import com.qads.qedhex.helpers.Route;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,18 +57,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        getRoute();
+        //getRoute(HomeFragment.mapDocID);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
+
+
+        final Button button = findViewById(R.id.new_route_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Map<String, Object> docData2 = new HashMap<>();
+                HomeFragment.mapDocID = db.collection("walks").document().getId();
+                docData2.put("time_to_walk", HomeFragment.walkTime);
+                docData2.put("walk_speed", 1);
+                docData2.put("location", HomeFragment.location);
+// Add a new document (asynchronously) in collection "cities" with id "LA"
+                db.collection("walks").document(HomeFragment.mapDocID).set(docData2);
+                getRoute(HomeFragment.mapDocID);
+            }
+        });
+
+
+
+
+
     }
 
-    public void getRoute() {
+    public void getRoute(String docID) {
 
-        routes = db.collection("walks").document("ggtBZskiq249Nd790PNa");
+        routes = db.collection("walks").document(docID);
         routesReg = routes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @SuppressLint("ResourceAsColor")
             @Override
@@ -129,3 +154,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
+
+//Map<String, Object> docData2 = new HashMap<>();
+//                String mapDocID = db.collection("calendar_slots").document().getId();
+//                docData.put("time_to_walk", walkTime);
+//                docData.put("walk_speed", 1);
+//                docData.put("location", location);
+//// Add a new document (asynchronously) in collection "cities" with id "LA"
+//                db.collection("walks").document(mapDocID).set(docData2);

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,3 +14,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.MapsActivity" />
+
+
+    <Button
+        android:id="@+id/new_route_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#359c5e"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:padding="8dp"
+        android:layout_margin="5dp"
+        android:text="regenerate route"
+        android:textColor="#ffffff" />
+
+</RelativeLayout>
