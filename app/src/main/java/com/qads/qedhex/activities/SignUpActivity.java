@@ -1,6 +1,7 @@
 package com.qads.qedhex.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,12 +14,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,6 +34,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -34,6 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.qads.qedhex.R;
 import com.qads.qedhex.helpers.User;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -87,6 +96,7 @@ public class SignUpActivity extends AppCompatActivity {
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
+                .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
                 .requestEmail()
                 .build();
         mSignInClient = GoogleSignIn.getClient(this, gso);
@@ -94,12 +104,13 @@ public class SignUpActivity extends AppCompatActivity {
         // Set click listeners
         //mSignInButton.setOnClickListener(this);
 
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser != null) {
-                    Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
                 }
@@ -141,6 +152,24 @@ public class SignUpActivity extends AppCompatActivity {
                 final GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
 
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String scope = "oauth2:"+ Scopes.EMAIL+" "+ Scopes.PROFILE;
+                            String accessToken = GoogleAuthUtil.getToken(getApplicationContext(), account.getAccount(), scope, new Bundle());
+                            Log.d(TAG, "ACCESSTOKEN:"+accessToken);
+                            System.out.println(accessToken);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (GoogleAuthException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                AsyncTask.execute(runnable);
+
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
@@ -148,7 +177,20 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+    String idTokenString = "";
+
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
+
+        Log.d(TAG, "Google User Id :" + acct.getId());
+
+        // --------------------------------- //
+        // BELOW LINE GIVES YOU JSON WEB TOKEN, (USED TO GET ACCESS TOKEN) :
+        Log.d(TAG, "Google JWT : " + acct.getIdToken());
+        // --------------------------------- //
+
+        // Save this JWT in global String :
+        idTokenString = acct.getIdToken();
+
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mFirebaseAuth.signInWithCredential(credential)
