@@ -73,6 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Map<String, Object> docData2 = new HashMap<>();
                 HomeFragment.mapDocID = db.collection("walks").document().getId();
                 docData2.put("time_to_walk", HomeFragment.walkTime);
+                //System.out.println(docData2.put("time_to_walk", HomeFragment.walkTime));
                 docData2.put("walk_speed", 1);
                 docData2.put("location", HomeFragment.location);
 // Add a new document (asynchronously) in collection "cities" with id "LA"
