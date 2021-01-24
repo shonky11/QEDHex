@@ -32,6 +32,7 @@ import com.google.firebase.storage.StorageReference;
 import com.qads.qedhex.R;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.qads.qedhex.helpers.Route;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -54,26 +55,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void getCard() {
-
-        routes = db.collection("Events").document(routeID);
-        routesReg = routes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @SuppressLint("ResourceAsColor")
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    System.err.println("Listen failed: " + error);
-                    return;
-                }
-
-                if (value != null && value.exists()) {
-                    route = value.toObject(Route.class);
-                    route.setID(routeID);
-
-                }
-            }
-        });
-    }
+//    public void getCard() {
+//
+//        routes = db.collection("Events").document(routeID);
+//        routesReg = routes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//            @SuppressLint("ResourceAsColor")
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+//                if (error != null) {
+//                    System.err.println("Listen failed: " + error);
+//                    return;
+//                }
+//
+//                if (value != null && value.exists()) {
+//                    route = value.toObject(Route.class);
+//                    route.setID(routeID);
+//
+//                }
+//            }
+//        });
+//    }
 
     /**
      * Manipulates the map once available.
