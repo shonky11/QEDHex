@@ -21,7 +21,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="100sp"
             android:contentDescription="bridge_logo"
-            android:src="@drawable/ic_bridge_logo"/>
+            android:src="@drawable/ic_nature_people_black_124dp"/>
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"

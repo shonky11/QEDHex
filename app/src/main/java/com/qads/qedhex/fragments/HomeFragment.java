@@ -10,8 +10,15 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.qads.qedhex.R;
 import com.qads.qedhex.activities.MapsActivity;
+import com.qads.qedhex.activities.LoginActivity;
+import com.qads.qedhex.activities.SignUpActivity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,7 +70,7 @@ public class HomeFragment extends Fragment {
                 textView.setText("" + i);
                 walkTime = i;
                 //textView.setY(100); just added a value set this properly using screen with height aspect ratio , if you do not set it by default it will be there below seek bar
-//hehe
+                //hehehe
             }
 
             @Override
@@ -90,6 +97,19 @@ public class HomeFragment extends Fragment {
         //hehe
 
         return rootView;
+    }
+
+    public void signOut(View v) {
+        //SIGN OUT METHOD
+        cartImageButton = (ImageView) v.findViewById(R.id.sign_out);
+        cartImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getActivity(), SignUpActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

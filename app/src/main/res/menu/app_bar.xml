@@ -9,11 +9,11 @@
         android:title="notifications"
         app:showAsAction="always"/>
 
-<!--    <item-->
-<!--        android:id="@+id/search"-->
-<!--        android:icon="@drawable/ic_search_icon_24dp"-->
-<!--        android:title="search"-->
-<!--        app:showAsAction="always"/>-->
+    <!--    <item-->
+    <!--        android:id="@+id/search"-->
+    <!--        android:icon="@drawable/ic_search_icon_24dp"-->
+    <!--        android:title="search"-->
+    <!--        app:showAsAction="always"/>-->
 
 
 </menu>
