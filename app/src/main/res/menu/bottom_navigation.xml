@@ -3,11 +3,11 @@
     <item
         android:id="@+id/nav_cafe"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="Cafe" />
+        android:title="Profile" />
 
     <item
         android:id="@+id/nav_bar"
         android:icon="@drawable/ic_person_black_24dp"
-        android:title="Bar" />
+        android:title="Home" />
 
 </menu>
