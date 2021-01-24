@@ -12,8 +12,6 @@
         <activity
             android:name="com.qads.qedhex.activities.SignUpActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,8 +23,6 @@
 
         <activity android:name="com.qads.qedhex.activities.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
