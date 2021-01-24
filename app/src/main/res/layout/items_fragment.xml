@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:collapsedTitleGravity="center"
+            app:expandedTitleGravity="center"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:background="@color/navAndActionBar">
+
+            <RelativeLayout
+                android:id="@+id/view_to_be_collapsed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/final_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    android:backgroundTint="@color/fui_transparent"
+                    android:contentInsetLeft="0dp"
+                    android:contentInsetStart="0dp"
+                    app:contentInsetLeft="0dp"
+                    app:contentInsetStart="0dp"
+                    android:contentInsetRight="0dp"
+                    android:contentInsetEnd="0dp"
+                    app:contentInsetRight="0dp"
+                    app:contentInsetEnd="0dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/final_card_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/navAndActionBar">
+
+                        <ImageView
+                            android:id="@+id/final_app_bar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="?attr/actionBarSize"
+                            android:src="@drawable/ic_nature_people_black_48dp"
+                            app:layout_collapseMode="parallax"
+                            android:layout_gravity="center_horizontal"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            />
+
+                        />
+
+                    </androidx.cardview.widget.CardView>
+
+                </androidx.appcompat.widget.Toolbar>
+
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:backgroundTint="@color/fui_transparent"
+                />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+
+            android:id="@+id/items_rv"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
