@@ -281,13 +281,13 @@ public class ProfileFragment extends Fragment implements InterestsAdapter.OnNote
         //e.g create an intent to go somewhere
         String one_interest = interestsModel.get(position).getInterests(); //this gets a reference to the object that is pressed
         Log.d(TAG, "onNoteClick: " + String.valueOf(one_interest));
-        if (cardView.getCardBackgroundColor() == ColorStateList.valueOf(getResources().getColor(R.color.colorAccent))){
+        if (cardView.getCardBackgroundColor() == ColorStateList.valueOf(getResources().getColor(R.color.interestsCard))){
             cardView.setCardBackgroundColor(Color.WHITE);
             textView.setTextColor(Color.BLACK);
             docRef.update("interests", FieldValue.arrayRemove(one_interest));
         }
         else{
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorAccent));
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.interestsCard));
             textView.setTextColor(Color.WHITE);
             docRef.update("interests", FieldValue.arrayUnion(one_interest));
         }

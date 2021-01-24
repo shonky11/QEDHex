@@ -1,6 +1,7 @@
 package com.qads.qedhex.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,12 +14,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,6 +39,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.qads.qedhex.R;
 import com.qads.qedhex.helpers.User;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -48,6 +54,8 @@ public class SignUpActivity extends AppCompatActivity {
     private CardView login_card;
 
     private GoogleSignInClient mSignInClient;
+
+    public static String accessToken;
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
@@ -87,6 +95,8 @@ public class SignUpActivity extends AppCompatActivity {
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
+                .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
+                .requestScopes(new Scope("https://www.googleapis.com/auth/calendar.events"))
                 .requestEmail()
                 .build();
         mSignInClient = GoogleSignIn.getClient(this, gso);
@@ -141,6 +151,24 @@ public class SignUpActivity extends AppCompatActivity {
                 final GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
 
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String scope = "oauth2:"+ Scopes.EMAIL+" "+ Scopes.PROFILE;
+                            accessToken = GoogleAuthUtil.getToken(getApplicationContext(), account.getAccount(), scope, new Bundle());
+                            Log.d(TAG, "ACCESSTOKEN:"+accessToken);
+                            System.out.println(accessToken);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (GoogleAuthException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                AsyncTask.execute(runnable);
+
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
@@ -185,7 +213,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                                                     }
                                                 });*/
-                                        User users = new User(null, null, null, mFirebaseAuth.getUid(),null);
+                                        User users = new User(null, null, null,mFirebaseAuth.getUid(), null, accessToken);
                                         docIdRef.set(users)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
@@ -199,7 +227,9 @@ public class SignUpActivity extends AppCompatActivity {
                                                         Log.w(TAG, "Error adding document", e);
                                                     }
                                                 });
-                                        startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                                        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                        intent.putExtra("accessToken", accessToken);
+                                        startActivity(intent);
 
                                         finish();
                                     } else {

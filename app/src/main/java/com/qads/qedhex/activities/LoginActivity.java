@@ -106,10 +106,18 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
 
     private String TAG = "MyActivity";
 
+    public static String access;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            access = extras.getString("accessToken");
+            //The key argument here must match that used in the other activity
+        }
 
         checkBox = findViewById(R.id.checkbox);
 
@@ -151,7 +159,7 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
                     Toast.makeText(getApplicationContext(), "Please check the tick box", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    User users = new User(first_name, last_name, age, mFirebaseAuth.getUid(), null);
+                    User users = new User(first_name, last_name, age, mFirebaseAuth.getUid(), null, access);
                     docRef.set(users)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -324,13 +332,13 @@ public class LoginActivity extends AppCompatActivity implements InterestsAdapter
         //e.g create an intent to go somewhere
         String one_interest = interestsModel.get(position).getInterests(); //this gets a reference to the object that is pressed
         Log.d(TAG, "onNoteClick: " + String.valueOf(one_interest));
-        if (cardView.getCardBackgroundColor() == ColorStateList.valueOf(getResources().getColor(R.color.colorAccent))){
+        if (cardView.getCardBackgroundColor() == ColorStateList.valueOf(getResources().getColor(R.color.interestsCard))){
             cardView.setCardBackgroundColor(Color.WHITE);
             textView.setTextColor(Color.BLACK);
             docRef.update("interests", FieldValue.arrayRemove(one_interest));
         }
         else{
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorAccent));
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.interestsCard));
             textView.setTextColor(Color.WHITE);
             docRef.update("interests", FieldValue.arrayUnion(one_interest));
         }
