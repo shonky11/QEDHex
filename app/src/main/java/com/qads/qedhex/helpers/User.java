@@ -10,17 +10,19 @@ public class User {
     private String mUid;
     private String mInterests;
     private ArrayList<String> mMyInterests;
+    private String mAccessToken;
 
     public User(){
 
     }
 
-    public User(String firstname, String lastname, String age, String uid, String interests1) {
+    public User(String firstname, String lastname, String age, String uid, ArrayList<String> interests, String accesstoken) {
         mFirstname = firstname;
         mLastname = lastname;
         mAge = age;
         mUid = uid;
-        mInterests = interests1;
+        mMyInterests = interests;
+        mAccessToken = accesstoken;
     }
 
     public String getFirstname() {
@@ -46,6 +48,10 @@ public class User {
     public ArrayList<String> getmMyInterests() {
         return mMyInterests;
     }
+
+    public String getAccesstoken(){ return mAccessToken;}
+
+    public void setAccesstoken(String accesstoken){this.mAccessToken = accesstoken;}
 
     public void setmMyInterests(ArrayList<String> interests) {
         this.mMyInterests = interests;
